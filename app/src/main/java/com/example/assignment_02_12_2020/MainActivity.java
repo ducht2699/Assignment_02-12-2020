@@ -8,9 +8,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -24,25 +26,44 @@ public class MainActivity extends AppCompatActivity {
 
     List<Email> emailList = new ArrayList<Email> (   );
     List<Integer> colorList = new ArrayList<Integer>( );
+    EmailAdapter adapter;
+    ListView rv;
+    List<Email> tempEmailList;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.drawer_menu, menu);
 
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private ActionBarDrawerToggle toggle;
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                tempEmailList.clear();
+                MainActivity.this.adapter.notifyDataSetChanged();
+                for (int i = 0; i< emailList.size(); i++) {
+                    if (query.contains(emailList.get(i).getTitle()) == true) {
+                        tempEmailList.add(emailList.get(i));
+                        MainActivity.this.adapter.notifyDataSetChanged();
+                    }
+                }
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        init();
-
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setupDrawerContent(navigationView);
+        setTitle("Email");
 
 
         int id = getResources().getColor(R.color.red);
@@ -51,9 +72,9 @@ public class MainActivity extends AppCompatActivity {
         colorList.add(id);
         id = getResources().getColor(R.color.yellow);
         colorList.add(id);
-        id = getResources().getColor(R.color.cyan);
-        colorList.add(id);
         id = getResources().getColor(R.color.green);
+        colorList.add(id);
+        id = getResources().getColor(R.color.cyan);
         colorList.add(id);
         id = getResources().getColor(R.color.blue);
         colorList.add(id);
@@ -67,45 +88,15 @@ public class MainActivity extends AppCompatActivity {
             Email temp = new Email(title, details, String.valueOf(title.charAt(0)));
             emailList.add(temp);
         }
+        tempEmailList = new ArrayList<>(emailList);
 
-        EmailAdapter adapter = new EmailAdapter(emailList, this, colorList);
-
-        ListView rv = findViewById(R.id.rv_emails);
+        adapter = new EmailAdapter(tempEmailList, this, colorList);
+        rv = findViewById(R.id.rv_emails);
         rv.setAdapter(adapter);
     }
 
 
-    private void init() {
 
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.navigation_view);
-    }
 
-    private void setupDrawerContent(NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                selectedItemDrawer(item);
-                return true;
-            }
-        });
-    }
-    private void selectedItemDrawer(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_all:
-                setTitle("ALL INBOXES");
-
-                break;
-            case R.id.menu_star:
-                setTitle("STARRED");
-
-                break;
-
-        }
-
-        item.setChecked(true);
-
-        drawerLayout.closeDrawers();
-    }
 
 }
