@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@tools:sample/first_names">
+
+    <!--now add some icons-->
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/menu_all"
+            android:title="All inboxes"
+            android:icon="@drawable/ic_baseline_star_outline_24"
+            />
+        <item
+            android:id="@+id/menu_star"
+            android:title="Starred"
+            android:icon="@drawable/ic_baseline_all_inbox_24"
+            />
+
+        />
+
+    </group>
+
+</menu>
